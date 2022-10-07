@@ -1,0 +1,46 @@
+package frc.robot;
+
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+
+public class DefaultDriveCommand extends CommandBase {
+    private final Drivetrain m_drivetrainSubsystem;
+
+    private final Double m_translationXSupplier;
+    private final Double m_translationYSupplier;
+    private final Double m_rotationSupplier;
+
+    public DefaultDriveCommand(Drivetrain drivetrainSubsystem,
+                               Double translationXSupplier,
+                               Double translationYSupplier,
+                               Double rotationSupplier) {
+        this.m_drivetrainSubsystem = drivetrainSubsystem;
+        this.m_translationXSupplier = translationXSupplier;
+        this.m_translationYSupplier = translationYSupplier;
+        this.m_rotationSupplier = rotationSupplier;
+
+        addRequirements(drivetrainSubsystem);
+    }
+
+    
+
+    @Override
+    public void execute() {
+        
+        // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
+        m_drivetrainSubsystem.drive(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        m_translationXSupplier,
+                        m_translationYSupplier,
+                        m_rotationSupplier,
+                        m_drivetrainSubsystem.getGyroscopeRotation()
+                )
+        );
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+    }
+}
